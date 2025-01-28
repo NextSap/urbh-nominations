@@ -5,6 +5,7 @@ import {getMatches} from "@/services/urbh.service";
 import {MatchType} from "@/schemes/match.scheme";
 import {format, startOfWeek} from "date-fns";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
+import {Spinner} from "@heroui/spinner";
 
 const sortSeries = [
     "First Division Men",
@@ -33,6 +34,7 @@ const sortSeries = [
 export default function Home() {
 
     const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getMatches(format(new Date(), "yyyy-MM-dd"), "2025-06-30").then((data) => {
@@ -58,11 +60,17 @@ export default function Home() {
             });
 
             setWeeklyMatches(groupedByWeek);
+            setLoading(false);
         });
     }, []);
 
     return (
         <div className="flex flex-col gap-1.5">
+            {loading &&
+            <div className="h-[100vh] flex flex-col gap-3 justify-center items-center">
+                <p>Data are loading...</p>
+                <Spinner/>
+            </div>}
             {/*matches.sort((a, b) => {
                 return sortSeries.indexOf(a.serie_name) - sortSeries.indexOf(b.serie_name);
             }).map((match, index, sortedMatches) => {
