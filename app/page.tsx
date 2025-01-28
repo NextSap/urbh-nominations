@@ -6,6 +6,8 @@ import {MatchType} from "@/schemes/match.scheme";
 import {format, startOfWeek} from "date-fns";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Spinner} from "@heroui/spinner";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
 
 const sortSeries = [
     "First Division Men",
@@ -32,9 +34,9 @@ const sortSeries = [
 ]
 
 export default function Home() {
-
     const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
     const [loading, setLoading] = useState(true);
+    const [refereeFilter, setRefereeFilter] = useState<string>("");
 
     useEffect(() => {
         getMatches(format(new Date(), "yyyy-MM-dd"), "2025-06-30").then((data) => {
@@ -64,43 +66,37 @@ export default function Home() {
         });
     }, []);
 
-    return (
-        <div className="flex flex-col gap-1.5">
-            {loading &&
-            <div className="h-[100vh] flex flex-col gap-3 justify-center items-center">
-                <p>Data are loading...</p>
-                <Spinner/>
-            </div>}
-            {/*matches.sort((a, b) => {
-                return sortSeries.indexOf(a.serie_name) - sortSeries.indexOf(b.serie_name);
-            }).map((match, index, sortedMatches) => {
-                const showSerieName =
-                    index === 0 || match.serie_name !== sortedMatches[index - 1].serie_name;
+    const filteredMatches = (matches: MatchType[]) => {
+        return matches.filter((match) => {
+            return match.referees.some((referee) => {
+                if (referee === null) {
+                    return false;
+                }
+                return referee.firstname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
+                    referee.surname.toLowerCase().includes(refereeFilter.toLowerCase());
+            });
+        });
+    };
 
-                return (
-                    <div key={match.reference}>
-                        {showSerieName && <p>{match.serie_name.toUpperCase()}</p>}
-                        <p>{match.date} - {match.time} {match.home_team_name} {match.home_score} - {match.away_score} {match.away_team_name}</p>
-                        <div className="flex gap-3">
-                            {match.referees.map((referee) => {
-                                if (referee !== null)
-                                    return (
-                                        <p key={referee.id}>{referee.firstname} {referee.surname.toUpperCase()}</p>
-                                    )
-                            })}
-                        </div>
-                    </div>
-                )
-            })*/}
-            <Accordion className="p-3" type="multiple">
+    return (
+        <div className="flex flex-col gap-1.5 p-3">
+            {loading &&
+                <div className="h-[100vh] flex flex-col gap-3 justify-center items-center">
+                    <p>Data are loading...</p>
+                    <Spinner/>
+                </div>}
+            <Label htmlFor="refereeFilter">Filter by referee</Label>
+            <Input id="refereeFilter" value={refereeFilter} onChange={(event) => setRefereeFilter(event.target.value)}/>
+            <Accordion type="multiple">
                 {Object.entries(weeklyMatches).map(([week, matches]) => (
                     <AccordionItem value={week} key={week}>
                         <AccordionTrigger className="font-bold text-xl">Week of {week}</AccordionTrigger>
                         <AccordionContent>
-                            {matches.map((match, index, sortedMatches) => {
+                            {filteredMatches(matches).map((match, index, sortedMatches) => {
                                 const showSerieName =
                                     index === 0 || match.serie_name !== sortedMatches[index - 1].serie_name;
-                                const formatDate = format(new Date(match.date), "dd/MM/yyyy");
+                                const formatDate = format(new Date(match.date), "EEEE dd/MM/yyyy");
+
                                 const formatTime = match.time.split(":").slice(0, 2).join(":");
                                 return (
                                     <div key={match.reference} className="pl-4 pb-4">
@@ -110,11 +106,11 @@ export default function Home() {
                                         <div>
                                             {match.referees.map((referee) => {
                                                 if (referee !== null) {
-                                                   return (
-                                                       <p key={referee.id}>
-                                                           {referee.firstname} {referee.surname.toUpperCase()}
-                                                       </p>
-                                                   );
+                                                    return (
+                                                        <p key={referee.id}>
+                                                            {referee.firstname} {referee.surname.toUpperCase()}
+                                                        </p>
+                                                    );
                                                 }
                                             })}
                                             {match.referees.every((referee) => referee === null) && <p>No referee</p>}
