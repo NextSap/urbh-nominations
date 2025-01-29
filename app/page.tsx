@@ -67,13 +67,12 @@ export default function Home() {
     }, []);
 
     const filteredMatches = (matches: MatchType[]) => {
+        if(refereeFilter === "") return matches;
         return matches.filter((match) => {
             return match.referees.some((referee) => {
-                if (referee === null) {
-                    return false;
-                }
-                return referee.firstname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
-                    referee.surname.toLowerCase().includes(refereeFilter.toLowerCase());
+                if (referee !== null)
+                    return referee.firstname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
+                        referee.surname.toLowerCase().includes(refereeFilter.toLowerCase());
             });
         });
     };
