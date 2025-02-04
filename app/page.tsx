@@ -52,6 +52,8 @@ const series = [
     "Friendly games without ref",
 ]
 
+const baseImage = "https://admin.handballbelgium.be/lms_league_ws/public/img/";
+
 export default function Home() {
     const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
     const [loading, setLoading] = useState(true);
@@ -128,28 +130,44 @@ export default function Home() {
                                         {filteredMatches(matches).map((match, index, sortedMatches) => {
                                             const showSerieName =
                                                 index === 0 || match.serie_reference !== sortedMatches[index - 1].serie_reference;
-                                            const formatDate = format(new Date(match.date), "EEEE dd/MM/yyyy");
+                                            const formatDate = format(new Date(match.date), "EEEEEE dd/MM/yyyy");
 
                                             const formatTime = match.time ? match.time.split(":").slice(0, 2).join(":") : "00:00";
                                             return (
-                                                <div key={match.reference} className="pl-4 pb-4">
+                                                <div key={match.reference} className="pb-4 md:w-96">
                                                     {showSerieName &&
                                                         <p className="font-bold">{series[sortedSeries.indexOf(match.serie_reference)].toUpperCase()}</p>}
-                                                    <p>{match.serie_name}</p>
-                                                    <p>{formatDate} - {formatTime}</p>
-                                                    <p>{match.home_team_short_name} {match.home_score} -{" "}{match.away_score} {match.away_team_short_name}</p>
-                                                    <div>
-                                                        {match.referees.map((referee) => {
-                                                            if (referee !== null) {
-                                                                return (
-                                                                    <p key={referee.id}>
-                                                                        {referee.firstname} {referee.surname.toUpperCase()}
-                                                                    </p>
-                                                                );
-                                                            }
-                                                        })}
-                                                        {match.referees.every((referee) => referee === null) &&
-                                                            <p>No referee</p>}
+                                                    <div className="flex">
+                                                        <div className="w-[70%]">
+                                                            <p>{match.serie_name}</p>
+                                                            <p>{formatDate} - {formatTime}</p>
+                                                            <div className="flex gap-2">
+                                                                <img src={baseImage + match.home_club_logo_img_url}
+                                                                     alt={match.home_team_short_name}
+                                                                     className="w-6 h-6"/>
+                                                                <p>{match.home_team_short_name}</p>
+                                                            </div>
+                                                            <div className="flex gap-2">
+                                                                <img src={baseImage + match.away_club_logo_img_url}
+                                                                     alt={match.away_team_short_name}
+                                                                     className="w-6 h-6"/>
+                                                                <p>{match.away_team_short_name}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <p>Referees</p>
+                                                            {match.referees.map((referee) => {
+                                                                if (referee !== null) {
+                                                                    return (
+                                                                        <p key={referee.id}>
+                                                                            {referee.surname} {referee.firstname.substring(0, 1).toUpperCase()}.
+                                                                        </p>
+                                                                    );
+                                                                }
+                                                            })}
+                                                            {match.referees.every((referee) => referee === null) &&
+                                                                <p>No referee</p>}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             );
@@ -186,3 +204,17 @@ export default function Home() {
                 </div>
             ));
 }
+
+/*
+*
+* <div className="flex gap-1.5 items-center">
+                                                        <p>{match.home_team_short_name}</p>
+                                                        <img src={baseImage + match.home_club_logo_img_url}
+                                                             alt={match.home_team_short_name} className="w-6 h-6"/>
+                                                        <p className="">10</p>
+                                                        <p>-</p>
+                                                        <p className="">39</p>
+                                                        <img src={baseImage + match.away_club_logo_img_url}
+                                                             alt={match.away_team_short_name} className="w-6 h-6"/>
+                                                        <p>{match.away_team_short_name}</p>
+                                                    </div> */
