@@ -64,7 +64,7 @@ export default function Home() {
     useEffect(() => {
         const internalSelectedSeries = getStoredSelectedSeries();
         setSelectedSeries(internalSelectedSeries);
-        getMatches(format(new Date(), "yyyy-MM-dd"), "2025-06-30").then((data) => {
+        getMatches(format(startOfWeek(new Date(), {weekStartsOn: 1}), "yyyy-MM-dd"), "2025-06-30").then((data) => {
             const matches = data.elements;
 
             // Regroupement par semaine
