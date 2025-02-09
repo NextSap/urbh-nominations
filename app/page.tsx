@@ -20,6 +20,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {getStoredSelectedSeries, setStoredSelectedSeries} from "@/utils/localstorage.utils";
 import MatchComponent from "@/components/match.component";
 import LoaderComponent from "@/components/loader.component";
+import Image from "next/image";
 
 export default function Home() {
     const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
@@ -65,7 +66,7 @@ export default function Home() {
         return matches.filter((match) => {
             let show: boolean = false;
             match.referees.forEach((referee) => {
-                if(referee !== null)
+                if (referee !== null)
                     show = show || (referee.surname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
                         referee.firstname.toLowerCase().includes(refereeFilter.toLowerCase()));
             });
@@ -85,23 +86,27 @@ export default function Home() {
                 <Sheet onOpenChange={(open) => {
                     if (!open) window.location.reload();
                 }}>
-                    <SheetTrigger asChild>
-                        <Button>Select competitions</Button>
-                    </SheetTrigger>
-
-                    <Label htmlFor="refereeFilter">Filter by referee</Label>
-                    <Input id="refereeFilter" value={refereeFilter}
-                           onChange={(event) => setRefereeFilter(event.target.value)}/>
-                    <div className="flex gap-1.5 items-center">
+                    <Image className="m-auto" src={"/urbh_logo.png"} alt={"URBH Logo"} width={50} height={50}/>
+                    <h1 className="flex justify-center font-bold text-2xl w-full text-center">Belgian Referees
+                        Nominations</h1>
+                    <div className="my-1.5">
+                        <Label htmlFor="refereeFilter">Filter by referee</Label>
+                        <Input id="refereeFilter" value={refereeFilter}
+                               onChange={(event) => setRefereeFilter(event.target.value)}/>
+                    </div>
+                    <div className="flex gap-1.5 items-center my-1.5">
                         <Checkbox id="showScore" checked={showScore}
                                   onCheckedChange={() => setShowScore(!showScore)}/>
                         <Label htmlFor={"showScore"}>Show score</Label>
                     </div>
-                    <div className="flex gap-1.5 items-center">
+                    <div className="flex gap-1.5 items-center my-0.5">
                         <Checkbox id="showDelegates" checked={showDelegates}
                                   onCheckedChange={() => setShowDelegates(!showDelegates)}/>
                         <Label htmlFor={"showDelegates"}>Show delegates</Label>
                     </div>
+                    <SheetTrigger asChild>
+                        <Button variant="third" className="my-2">Click to display others competitions</Button>
+                    </SheetTrigger>
                     <Accordion type="multiple">
                         {Object.entries(weeklyMatches).map(([week, matches]) => {
                             const date = new Date(week);
@@ -114,8 +119,7 @@ export default function Home() {
                                         Su {sunday}</AccordionTrigger>
                                     <AccordionContent>
                                         {filteredMatches(matches).map((match, index, sortedMatches) => {
-                                            console.log(match);
-                                            return <MatchComponent key={match.reference+index} match={match}
+                                            return <MatchComponent key={match.reference + index} match={match}
                                                                    showScore={showScore}
                                                                    showDelegates={showDelegates}
                                                                    index={index}
