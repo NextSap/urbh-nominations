@@ -25,7 +25,7 @@ const MatchComponent = (props: MatchComponentProps) => {
                 <p className="font-bold">{series[sortedSeries.indexOf(props.match.serie_reference)].toUpperCase()}</p>}
             <div className="flex">
                 <div className="w-[70%]">
-                    <p>{props.match.serie_name}</p>
+                    <p>{props.match.reference}</p>
                     <p>{formatDate} - {formatTime}</p>
                     <div className="flex gap-2 items-center">
                         <img
