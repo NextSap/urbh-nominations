@@ -18,6 +18,7 @@ export const Match = z.object({
     home_club_logo_img_url: z.string().optional(),
     away_club_logo_img_url: z.string().optional(),
     referees: z.array(Referee.nullable()),
+    delegates: z.array(Referee.nullable()).optional(),
 });
 
 export type MatchType = z.infer<typeof Match>;
