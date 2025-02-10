@@ -24,47 +24,54 @@ const MatchComponent = (props: MatchComponentProps) => {
             {showSerieName &&
                 <p className="font-bold">{series[sortedSeries.indexOf(props.match.serie_reference)].toUpperCase()}</p>}
             <div className="flex">
-                <div className="w-[70%]">
-                    <p>{props.match.reference}</p>
-                    <p>{formatDate} - {formatTime}</p>
-                    <div className="flex gap-2 items-center">
-                        <img
-                            src={baseImage + props.match.home_club_logo_img_url}
-                            alt={props.match.home_team_short_name}
-                            className="w-6 h-6"/>
-                        <p>{props.match.home_team_short_name}</p>
+                <div className="block ssm:flex">
+                    <div className="min-w-48">
+                        <p>{props.match.reference}</p>
+                        <p>{formatDate} - {formatTime}</p>
                     </div>
-                    <div className="flex gap-2 items-center">
-                        <img
-                            src={baseImage + props.match.away_club_logo_img_url}
-                            alt={props.match.away_team_short_name}
-                            className="w-6 h-6"/>
-                        <p>{props.match.away_team_short_name}</p>
+                    <div className="min-w-56">
+                        <div className="flex gap-2 items-center">
+                            <img
+                                src={baseImage + props.match.home_club_logo_img_url}
+                                alt={props.match.home_team_short_name}
+                                className="w-6 h-6"/>
+                            <p>{props.match.home_team_short_name}</p>
+                        </div>
+                        <div className="flex gap-2 items-center">
+                            <img
+                                src={baseImage + props.match.away_club_logo_img_url}
+                                alt={props.match.away_team_short_name}
+                                className="w-6 h-6"/>
+                            <p>{props.match.away_team_short_name}</p>
+                        </div>
                     </div>
                     {props.showScore &&
                         ((props.match.home_score == null || props.match.away_score == null) ?
-                            <p>No score</p> :
-                            <div className="flex gap-1 items-center">
-                                <p>{props.match.home_score}</p>
-                                <p>-</p>
-                                <p>{props.match.away_score}</p>
-                            </div>)
+                                <p>No score</p> :
+                                <div className="flex flex-row ssm:flex-col gap-1 items-center min-w-10">
+                                    <p>40</p>
+                                    <p className="ssm:hidden">-</p>
+                                    <p>25</p>
+                                </div>
+                        )
                     }
                 </div>
-                <div>
-                    <p className="font-bold underline">Referees</p>
-                    {props.match.referees.length == 0 && <p>No referee</p>}
-                    {props.match.referees.map((referee) => {
-                        if (referee !== null) {
-                            return (
-                                <p key={referee.id}>
-                                    {referee.surname} {referee.firstname.substring(0, 1).toUpperCase()}.
-                                </p>
-                            );
-                        }
-                    })}
+                <div className="block ssm:flex ssm:justify-around ssm:max-w-96 ssm:w-full ssm:ml-5">
+                    <div className="ssm:min-w-32">
+                        <p className="font-bold underline">Referees</p>
+                        {props.match.referees.length == 0 && <p>No referee</p>}
+                        {props.match.referees.map((referee) => {
+                            if (referee !== null) {
+                                return (
+                                    <p key={referee.id}>
+                                        {referee.surname} {referee.firstname.substring(0, 1).toUpperCase()}.
+                                    </p>
+                                );
+                            }
+                        })}
+                    </div>
                     {props.showDelegates && (
-                        <div>
+                        <div className="ssm:w-32">
                             <p className="font-bold underline">Delegates</p>
                             {!props.match.delegates && <p>No delegate</p>}
                             {props.match.delegates?.map((delegate) => {
