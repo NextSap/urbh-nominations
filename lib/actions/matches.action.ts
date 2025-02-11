@@ -5,7 +5,7 @@ import {addDays, format, startOfWeek} from "date-fns";
 import {unstable_cache} from "next/cache";
 
 const cache = unstable_cache(async (startDate: string, endDate: string) => getMatches(startDate, endDate), ["matches"], {
-    revalidate: 300,
+    revalidate: 3600,
 });
 
 export async function getCachedMatches() {

@@ -25,9 +25,10 @@ const MatchComponent = (props: MatchComponentProps) => {
                 <p className="font-bold">{series[sortedSeries.indexOf(props.match.serie_reference)].toUpperCase()}</p>}
             <div className="flex">
                 <div className="block ssm:flex">
-                    <div className="min-w-48">
+                    <div className="min-w-48 max-w-48">
                         <p>{props.match.reference}</p>
                         <p>{formatDate} - {formatTime}</p>
+                        <p>{props.match.venue_name}</p>
                     </div>
                     <div className="min-w-56">
                         <div className="flex gap-2 items-center">

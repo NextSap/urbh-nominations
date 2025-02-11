@@ -13,6 +13,7 @@ export const sortedSeries = [
     "D1D",
     "PM",
     "U18",
+    "U16F",
 
     "FA",
     "GA",
@@ -47,6 +48,7 @@ export const series = [
     "D1 LFH Dames",
     "Promotion",
     "U18 LFH",
+    "U16 LFH Filles",
 
     "Heren Liga 1",
     "Heren Liga 2",
@@ -118,7 +120,6 @@ export const getVHVMatches = async (startDate: string, endDate: string) => {
 const getVHVUrl = (startDate: string, endDate: string) => {
     return `https://admin.handballbelgium.be/lms_league_ws/public/api/v1/game/byMyLeague?with_referees=true&no_forfeit=true&season_id=4&without_in_preparation=true&sort[0]=date&sort[1]=time&organization_id=2&start_date=${startDate}&end_date=${endDate}`;
 }
-
 
 export const getMatches = async (startDate: string, endDate: string) => {
     const vhvMatches = getVHVMatches(startDate, endDate).then(matches => matches.elements);
