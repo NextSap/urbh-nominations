@@ -82,7 +82,7 @@ export default {
   		}
   	},
 	  screens: {
-		  'ssm': '714px'
+		  'ssm': '750px'
 	  }
   },
   plugins: [require("tailwindcss-animate"),heroui()],

@@ -27,6 +27,7 @@ const MainComponent = () => {
     const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
     const [isPending, startTransition] = useTransition();
     const [refereeFilter, setRefereeFilter] = useState<string>("");
+    const [teamFilter, setTeamFilter] = useState<string>("");
     const [selectedSeries, setSelectedSeries] = useState<{ [key: string]: boolean }>({});
     const [showScore, setShowScore] = useState<boolean>(false);
     const [showDelegates, setShowDelegates] = useState<boolean>(true);
@@ -44,20 +45,31 @@ const MainComponent = () => {
     }, []);
 
     const filteredMatches = (matches: MatchType[]) => {
-        if (refereeFilter === "") return matches;
+        if (refereeFilter == "" && teamFilter == "") {
+            return matches;
+        }
         return matches.filter((match) => {
             let show: boolean = false;
-            match.referees.forEach((referee) => {
-                if (referee !== null)
-                    show = show || (referee.surname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
-                        referee.firstname.toLowerCase().includes(refereeFilter.toLowerCase()));
-            });
-            showDelegates && match.delegates?.forEach((delegate) => {
-                if (delegate !== null) {
-                    show = show || (delegate.surname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
-                        delegate.firstname.toLowerCase().includes(refereeFilter.toLowerCase()));
-                }
-            });
+            if (refereeFilter !== "") {
+                match.referees.forEach((referee) => {
+                    if (referee !== null)
+                        show = show || (referee.surname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
+                            referee.firstname.toLowerCase().includes(refereeFilter.toLowerCase()));
+                });
+                showDelegates && match.delegates?.forEach((delegate) => {
+                    if (delegate !== null) {
+                        show = show || (delegate.surname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
+                            delegate.firstname.toLowerCase().includes(refereeFilter.toLowerCase()));
+                    }
+                });
+            }
+
+            if (teamFilter !== "") {
+                const homeTeamName = match.home_team_short_name?.toLowerCase() || "";
+                const awayTeamName = match.away_team_short_name?.toLowerCase() || "";
+                show = show || homeTeamName.includes(teamFilter.toLowerCase()) || awayTeamName.includes(teamFilter.toLowerCase());
+            }
+
             return show;
         });
     };
@@ -72,9 +84,14 @@ const MainComponent = () => {
                     <h1 className="flex justify-center font-bold text-2xl w-full text-center">Belgian Referees
                         Nominations</h1>
                     <div className="my-1.5">
-                        <Label htmlFor="refereeFilter">Filter by referee</Label>
+                        <Label htmlFor="refereeFilter">Filter by referee or delegate</Label>
                         <Input id="refereeFilter" value={refereeFilter}
                                onChange={(event) => setRefereeFilter(event.target.value)}/>
+                    </div>
+                    <div className="my-1.5">
+                        <Label htmlFor="teamFilter">Filter by team</Label>
+                        <Input id="teamFilter" value={teamFilter}
+                               onChange={(event) => setTeamFilter(event.target.value)}/>
                     </div>
                     <div className="flex gap-1.5 items-center my-1.5">
                         <Checkbox id="showScore" checked={showScore}
