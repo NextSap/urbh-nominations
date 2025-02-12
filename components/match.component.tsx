@@ -29,16 +29,16 @@ const MatchComponent = (props: MatchComponentProps) => {
             <div className="grid grid-cols-3 ssm:grid-cols-12 grid-rows-7 ssm:grid-rows-5 grid-flow-col">
                 <p className="col-span-2 ssm:row-span-1 ssm:col-span-3 hidden ssm:block"></p>
                 <p className="col-span-2 ssm:col-span-3">{props.match.reference}</p>
-                <p className="border col-span-2 ssm:col-span-3">{formatDate} - {formatTime}</p>
-                <p className={cn("border col-span-2 ssm:col-span-3 w-[95%] ssm:row-span-2", isVenueNameTooLong ? "row-span-2" : "row-span-1")}>{props.match.venue_name}</p>
-                <div className="border flex items-end gap-1.5 row-span-1 col-span-2 ssm:row-span-2 ssm:col-span-4">
+                <p className="col-span-2 ssm:col-span-3">{formatDate} - {formatTime}</p>
+                <p className={cn("col-span-2 ssm:col-span-3 w-[95%] ssm:row-span-2", isVenueNameTooLong ? "row-span-2" : "row-span-1")}>{props.match.venue_name}</p>
+                <div className="flex items-end gap-1.5 row-span-1 col-span-2 ssm:row-span-2 ssm:col-span-4">
                     <img
                         src={baseImage + props.match.home_club_logo_img_url}
                         alt={props.match.home_team_short_name}
                         className="w-5 h-5"/>
                     <p>{props.match.home_team_short_name}</p>
                 </div>
-                <div className={cn("border flex items-start gap-1.5 col-span-2 ssm:row-span-3 ssm:col-span-4")}>
+                <div className="flex items-start gap-1.5 col-span-2 ssm:row-span-3 ssm:col-span-4">
                     <img
                         src={baseImage + props.match.away_club_logo_img_url}
                         alt={props.match.away_team_short_name}
