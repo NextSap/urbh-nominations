@@ -7,14 +7,15 @@ export const Match = z.object({
     time: z.string().optional(),
     home_score: z.number().nullable().optional(),
     away_score: z.number().nullable().optional(),
-    home_forfeit_status_id: z.number(),
-    away_forfeit_status_id: z.number(),
+    home_forfeit_status_id: z.number(), // 0: no forfeit, 2: forfeit
+    away_forfeit_status_id: z.number(), // 0: no forfeit, 2: forfeit
     serie_reference: z.string(),
     serie_name: z.string(),
     venue_name: z.string().optional(),
     venue_city: z.string().optional(),
     home_team_short_name: z.string().optional(),
     away_team_short_name: z.string().optional(),
+    game_status_id: z.number(), // 1: scheduled, 2: played, 6: postponed
     home_club_logo_img_url: z.string().optional(),
     away_club_logo_img_url: z.string().optional(),
     referees: z.array(Referee.nullable()),
