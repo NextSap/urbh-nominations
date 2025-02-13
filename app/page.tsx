@@ -21,7 +21,7 @@ import {getStoredSelectedSeries, setStoredSelectedSeries} from "@/utils/localsto
 import MatchComponent from "@/components/match.component";
 import LoaderComponent from "@/components/loader.component";
 import Image from "next/image";
-import {getCachedMatches} from "@/lib/actions/matches.action";
+import {getCachedMatches, getLastRevalidateDate} from "@/lib/actions/matches.action";
 
 const MainComponent = () => {
     const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
@@ -31,6 +31,8 @@ const MainComponent = () => {
     const [selectedSeries, setSelectedSeries] = useState<{ [key: string]: boolean }>({});
     const [showScore, setShowScore] = useState<boolean>(false);
     const [showDelegates, setShowDelegates] = useState<boolean>(true);
+    const [showLastCacheUpdate, setShowLastCacheUpdate] = useState<boolean>(false);
+    const [lastCacheUpdate, setLastCacheUpdate] = useState<number>(0);
 
     useEffect(() => {
         const internalSelectedSeries = getStoredSelectedSeries();
@@ -41,6 +43,7 @@ const MainComponent = () => {
                 const groupedByWeek: Record<string, MatchType[]> = groupByWeekend(matches, internalSelectedSeries);
                 setWeeklyMatches(groupedByWeek);
             });
+            getLastRevalidateDate().then((date) => setLastCacheUpdate(date));
         });
     }, []);
 
@@ -80,9 +83,13 @@ const MainComponent = () => {
                 <Sheet onOpenChange={(open) => {
                     if (!open) window.location.reload();
                 }}>
-                    <Image className="m-auto" src={"/urbh_logo.png"} alt={"URBH Logo"} width={50} height={50}/>
+                    <Image className="m-auto z-10" src={"/urbh_logo.png"} alt={"URBH Logo"} width={50} height={50}
+                    onClick={() => {
+                        setShowLastCacheUpdate(!showLastCacheUpdate);
+                    }}/>
                     <h1 className="flex justify-center font-bold text-2xl w-full text-center">Belgian Referees
                         Nominations</h1>
+                    {showLastCacheUpdate && <p className="w-full text-center text-xs">Last matches update {format(new Date(lastCacheUpdate), "dd/MM/yyyy - HH:mm:ss")}</p>}
                     <div className="my-1.5">
                         <Label htmlFor="refereeFilter">Filter by referee or delegate</Label>
                         <Input id="refereeFilter" value={refereeFilter}
