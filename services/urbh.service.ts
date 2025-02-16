@@ -135,7 +135,7 @@ export const getMatches = async (startDate: string, endDate: string) => {
                 match.delegates = match.referees.slice(2);
                 match.referees = match.referees.slice(0, 2);
             }
-            if(match.serie_reference == "PrBHPO") match.serie_reference = "PM";
+            if (match.serie_reference == "PrBHPO") match.serie_reference = "PM";
         });
 
         return {

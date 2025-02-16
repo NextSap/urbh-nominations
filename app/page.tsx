@@ -3,7 +3,7 @@
 import {useEffect, useState, useTransition} from "react";
 import {series, sortedSeries} from "@/services/urbh.service";
 import {MatchType} from "@/schemes/match.scheme";
-import {addDays, format, startOfWeek} from "date-fns";
+import {addDays, format, parse, startOfWeek} from "date-fns";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
@@ -84,21 +84,24 @@ const MainComponent = () => {
                     if (!open) window.location.reload();
                 }}>
                     <Image className="m-auto z-10" src={"/urbh_logo.png"} alt={"URBH Logo"} width={50} height={50}
-                    onClick={() => {
-                        setShowLastCacheUpdate(!showLastCacheUpdate);
-                    }}/>
+                           onClick={() => {
+                               setShowLastCacheUpdate(!showLastCacheUpdate);
+                           }}/>
                     <h1 className="flex justify-center font-bold text-2xl w-full text-center">Belgian Referees
                         Nominations</h1>
-                    {showLastCacheUpdate && <p className="w-full text-center text-xs">Last matches update {format(new Date(lastCacheUpdate), "dd/MM/yyyy - HH:mm:ss")}</p>}
+                    {showLastCacheUpdate && <p className="w-full text-center text-xs">Last matches
+                        update {format(new Date(lastCacheUpdate), "dd/MM/yyyy - HH:mm:ss")}</p>}
                     <div className="my-1.5">
                         <Label htmlFor="refereeFilter">Filter by referee or delegate</Label>
                         <Input id="refereeFilter" value={refereeFilter}
-                               onChange={(event) => setRefereeFilter(event.target.value)}/>
+                               onChange={(event) => setRefereeFilter(event.target.value)}
+                               className="shadow-lg"/>
                     </div>
                     <div className="my-1.5">
                         <Label htmlFor="teamFilter">Filter by team</Label>
                         <Input id="teamFilter" value={teamFilter}
-                               onChange={(event) => setTeamFilter(event.target.value)}/>
+                               onChange={(event) => setTeamFilter(event.target.value)}
+                               className="shadow-lg"/>
                     </div>
                     <div className="flex gap-1.5 items-center my-1.5">
                         <Checkbox id="showScore" checked={showScore}
@@ -111,7 +114,7 @@ const MainComponent = () => {
                         <Label htmlFor={"showDelegates"}>Show delegates</Label>
                     </div>
                     <SheetTrigger asChild>
-                        <Button variant="third" className="my-2">Click to display others competitions</Button>
+                        <Button variant="third" className="my-2 shadow-lg">Click to display others competitions</Button>
                     </SheetTrigger>
                     <Accordion type="multiple">
                         {Object.entries(weeklyMatches).map(([week, matches]) => {
@@ -166,24 +169,38 @@ const MainComponent = () => {
 }
 
 const groupByWeekend = (matches: MatchType[], internalSelectedSeries: { [key: string]: boolean }) => {
-    const groupedByWeek: Record<string, MatchType[]> = {};
+    let groupedByWeek: Record<string, MatchType[]> = {};
     matches.forEach((match) => {
         if (!internalSelectedSeries[match.serie_reference]) return;
 
-        const weekStart = startOfWeek(new Date(match.date), {weekStartsOn: 1}); // Lundi
+        const weekStart = startOfWeek(new Date(match.date), {weekStartsOn: 1});
         const weekKey = format(weekStart, "yyyy/MM/dd");
 
-        if (!groupedByWeek[weekKey]) {
-            groupedByWeek[weekKey] = [];
-        }
+        if (!groupedByWeek[weekKey]) groupedByWeek[weekKey] = [];
+
         groupedByWeek[weekKey].push(match);
     });
 
     Object.keys(groupedByWeek).forEach((weekKey) => {
-        groupedByWeek[weekKey].sort((a, b) => a.serie_name.localeCompare(b.serie_name)).sort(
-            (a, b) => sortedSeries.indexOf(a.serie_reference) - sortedSeries.indexOf(b.serie_reference)
-        );
+        groupedByWeek[weekKey]
+            .sort((a, b) => a.serie_name.localeCompare(b.serie_name))
+            .sort((a, b) => sortedSeries.indexOf(a.serie_reference) - sortedSeries.indexOf(b.serie_reference))
+            .sort((a, b) => {
+                const dateA = parse(a.date + " " + a.time, "yyyy-MM-dd HH:mm:ss", new Date());
+                const dateB = parse(b.date + " " + b.time, "yyyy-MM-dd HH:mm:ss", new Date());
+
+                return dateA.getTime() - dateB.getTime();
+            });
     });
+
+    groupedByWeek = Object.fromEntries(
+        Object.entries(groupedByWeek)
+            .sort(([keyA], [keyB]) => {
+                const dateA = parse(keyA, "yyyy/MM/dd", new Date());
+                const dateB = parse(keyB, "yyyy/MM/dd", new Date());
+                return dateA.getTime() - dateB.getTime();
+            })
+    );
 
     return groupedByWeek;
 }

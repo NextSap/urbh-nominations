@@ -1,15 +1,12 @@
 import type {Metadata} from "next";
-import { Analytics } from "@vercel/analytics/react"
-import {Geist, Geist_Mono} from "next/font/google";
+import {Analytics} from "@vercel/analytics/react"
+import {Poppins} from "next/font/google";
 import "../styles/globals.css";
+import {cn} from "@/lib/utils";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
+const poppins = Poppins({
+    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+    variable: "--font-poppins",
     subsets: ["latin"],
 });
 
@@ -27,7 +24,7 @@ export default function RootLayout({
         <html lang="en">
         <link rel="icon" href="/urbh_logo.png" sizes="any"/>
         <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={cn(`${poppins.variable} antialiased`, "bg-[url('../public/background.png')] bg-no-repeat bg-contain bg-right bg-fixed")}
         >
         {children}
         <Analytics/>
