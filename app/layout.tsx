@@ -22,9 +22,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-        <link rel="icon" href="/urbh_logo.png" sizes="any"/>
+        <head>
+            <link rel="icon" href="/urbh_logo.png" sizes="any"/>
+        </head>
         <body
-            className={cn(`${poppins.variable} antialiased`, "bg-[url('../public/background.png')] bg-no-repeat bg-contain bg-right bg-fixed")}
+            className={cn(`${poppins.variable} antialiased`)}
         >
         {children}
         <Analytics/>
