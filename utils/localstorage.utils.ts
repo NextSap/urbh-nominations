@@ -27,3 +27,31 @@ export const getStoredSelectedSeries = (): { [key: string]: boolean } => {
 
     return JSON.parse(selectedSeries);
 }
+
+export const setStoredScoreOption = (show: boolean) => {
+    localStorage.setItem('optionsNominationsScore', JSON.stringify(show));
+}
+
+export const getStoredScoreOptions = (): boolean => {
+    const options = localStorage.getItem('optionsNominationsScore');
+    if (!options){
+        setStoredScoreOption(true);
+        return true;
+    }
+
+    return JSON.parse(options);
+}
+
+export const setStoredDelegateOption = (show: boolean) => {
+    localStorage.setItem('optionsNominationsDelegate', JSON.stringify(show));
+}
+
+export const getStoredDelegateOptions = (): boolean => {
+    const options = localStorage.getItem('optionsNominationsDelegate');
+    if (!options){
+        setStoredDelegateOption(true);
+        return true;
+    }
+
+    return JSON.parse(options);
+}

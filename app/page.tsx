@@ -17,7 +17,12 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 import {Checkbox} from "@/components/ui/checkbox";
-import {getStoredSelectedSeries, setStoredSelectedSeries} from "@/utils/localstorage.utils";
+import {
+    getStoredDelegateOptions, getStoredScoreOptions,
+    getStoredSelectedSeries, setStoredDelegateOption,
+    setStoredScoreOption,
+    setStoredSelectedSeries
+} from "@/utils/localstorage.utils";
 import MatchComponent from "@/components/match.component";
 import LoaderComponent from "@/components/loader.component";
 import Image from "next/image";
@@ -29,16 +34,19 @@ const MainComponent = () => {
     const [refereeFilter, setRefereeFilter] = useState<string>("");
     const [teamFilter, setTeamFilter] = useState<string>("");
     const [selectedSeries, setSelectedSeries] = useState<{ [key: string]: boolean }>({});
-    const [showScore, setShowScore] = useState<boolean>(false);
+    const [showScore, setShowScore] = useState<boolean>(true);
     const [showDelegates, setShowDelegates] = useState<boolean>(true);
     const [showLastCacheUpdate, setShowLastCacheUpdate] = useState<boolean>(false);
     const [lastCacheUpdate, setLastCacheUpdate] = useState<number>(0);
 
     useEffect(() => {
-        const internalSelectedSeries = getStoredSelectedSeries();
-        setSelectedSeries(internalSelectedSeries);
-
         startTransition(() => {
+            const internalSelectedSeries = getStoredSelectedSeries();
+            setSelectedSeries(internalSelectedSeries);
+
+            setShowScore(getStoredScoreOptions());
+            setShowDelegates(getStoredDelegateOptions());
+
             getCachedMatches().then((matches) => {
                 const groupedByWeek: Record<string, MatchType[]> = groupByWeekend(matches, internalSelectedSeries);
                 setWeeklyMatches(groupedByWeek);
@@ -105,12 +113,18 @@ const MainComponent = () => {
                     </div>
                     <div className="flex gap-1.5 items-center my-1.5">
                         <Checkbox id="showScore" checked={showScore}
-                                  onCheckedChange={() => setShowScore(!showScore)}/>
+                                  onCheckedChange={() => {
+                                      setShowScore(!showScore);
+                                      setStoredScoreOption(!showScore);
+                                  }}/>
                         <Label htmlFor={"showScore"}>Show score</Label>
                     </div>
                     <div className="flex gap-1.5 items-center my-0.5">
                         <Checkbox id="showDelegates" checked={showDelegates}
-                                  onCheckedChange={() => setShowDelegates(!showDelegates)}/>
+                                  onCheckedChange={() => {
+                                      setShowDelegates(!showDelegates);
+                                      setStoredDelegateOption(!showDelegates);
+                                  }}/>
                         <Label htmlFor={"showDelegates"}>Show delegates</Label>
                     </div>
                     <SheetTrigger asChild>
