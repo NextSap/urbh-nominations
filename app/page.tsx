@@ -183,14 +183,14 @@ const groupByWeekend = (matches: MatchType[], internalSelectedSeries: { [key: st
 
     Object.keys(groupedByWeek).forEach((weekKey) => {
         groupedByWeek[weekKey]
-            .sort((a, b) => a.serie_name.localeCompare(b.serie_name))
-            .sort((a, b) => sortedSeries.indexOf(a.serie_reference) - sortedSeries.indexOf(b.serie_reference))
             .sort((a, b) => {
                 const dateA = parse(a.date + " " + a.time, "yyyy-MM-dd HH:mm:ss", new Date());
                 const dateB = parse(b.date + " " + b.time, "yyyy-MM-dd HH:mm:ss", new Date());
 
                 return dateA.getTime() - dateB.getTime();
-            });
+            })
+            .sort((a, b) => a.serie_name.localeCompare(b.serie_name))
+            .sort((a, b) => sortedSeries.indexOf(a.serie_reference) - sortedSeries.indexOf(b.serie_reference));
     });
 
     groupedByWeek = Object.fromEntries(
