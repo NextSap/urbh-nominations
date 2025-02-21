@@ -29,8 +29,9 @@ import Image from "next/image";
 import {getCachedMatches, getLastRevalidateDate} from "@/lib/actions/matches.action";
 
 const MainComponent = () => {
-    const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isPending, startTransition] = useTransition();
+
     const [refereeFilter, setRefereeFilter] = useState<string>("");
     const [teamFilter, setTeamFilter] = useState<string>("");
     const [selectedSeries, setSelectedSeries] = useState<{ [key: string]: boolean }>({});
@@ -39,8 +40,12 @@ const MainComponent = () => {
     const [showLastCacheUpdate, setShowLastCacheUpdate] = useState<boolean>(false);
     const [lastCacheUpdate, setLastCacheUpdate] = useState<number>(0);
 
-    useEffect(() => {
+    const [weeklyMatches, setWeeklyMatches] = useState<Record<string, MatchType[]>>({});
+
+    const renderMatches = () => {
+        setIsLoading(true);
         startTransition(() => {
+
             const internalSelectedSeries = getStoredSelectedSeries();
             setSelectedSeries(internalSelectedSeries);
 
@@ -52,7 +57,13 @@ const MainComponent = () => {
                 setWeeklyMatches(groupedByWeek);
             });
             getLastRevalidateDate().then((date) => setLastCacheUpdate(date));
+
+            setIsLoading(false);
         });
+    }
+
+    useEffect(() => {
+        renderMatches();
     }, []);
 
     const filteredMatches = (matches: MatchType[]) => {
@@ -86,10 +97,10 @@ const MainComponent = () => {
     };
 
     return (
-        isPending ? <LoaderComponent/> : (
+        isLoading ? <LoaderComponent/> : (
             <div className="flex flex-col gap-1.5 p-3">
                 <Sheet onOpenChange={(open) => {
-                    if (!open) window.location.reload();
+                    if (!open) renderMatches();
                 }}>
                     <Image className="m-auto z-10" src={"/urbh_logo.png"} alt={"URBH Logo"} width={50} height={50}
                            onClick={() => {
