@@ -7,8 +7,8 @@ export const Match = z.object({
     time: z.string().optional(),
     home_score: z.number().nullable().optional(),
     away_score: z.number().nullable().optional(),
-    home_forfeit_status_id: z.number(), // 0: no forfeit, 2: forfeit
-    away_forfeit_status_id: z.number(), // 0: no forfeit, 2: forfeit
+    home_forfeit_status_id: z.number().optional(), // 0: no forfeit, 2: forfeit
+    away_forfeit_status_id: z.number().optional(), // 0: no forfeit, 2: forfeit
     serie_reference: z.string(),
     serie_name: z.string(),
     venue_name: z.string().optional(),
@@ -27,3 +27,27 @@ export type MatchType = z.infer<typeof Match>;
 export const MatchList = z.object({
     elements: z.array(Match),
 })
+
+export const SHLMatch = z.object({
+    Match: z.object({
+        PublicMatchId: z.string(),
+        MatchDateTime: z.string(),
+        Status: z.string(),
+        HomeTeam: z.object({
+            PublicTeamId: z.string(),
+            TeamName: z.string(),
+        }),
+        AwayTeam: z.object({
+            PublicTeamId: z.string(),
+            TeamName: z.string(),
+        }),
+    })
+});
+
+export type SHLMatchType = z.infer<typeof SHLMatch>;
+
+export const SHLMatchList = z.object({
+    ProgramItemMatch: z.array(SHLMatch),
+});
+
+export type SHLMatchListType = z.infer<typeof SHLMatchList>;

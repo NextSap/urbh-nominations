@@ -139,6 +139,10 @@ export const getMatches = async (startDate: string, endDate: string) => {
                 match.serie_reference = "PM";
             } else if(match.serie_reference == "D1MPD" || match.serie_reference == "D1MPM") {
                 match.serie_reference = "D1M";
+            } else if(match.serie_reference == "MFDPO" || match.serie_reference == "MFDPD") {
+                match.serie_reference = "MFDC";
+            } else if(match.serie_reference == "MSDPO" || match.serie_reference == "MSDPD") {
+                match.serie_reference = "MSDC";
             }
         });
 
