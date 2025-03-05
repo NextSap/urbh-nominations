@@ -66,34 +66,48 @@ const MainComponent = () => {
         renderMatches();
     }, []);
 
-    const filteredMatches = (matches: MatchType[]) => {
-        if (refereeFilter == "" && teamFilter == "") {
-            return matches;
-        }
-        return matches.filter((match) => {
-            let show: boolean = false;
-            if (refereeFilter !== "") {
-                match.referees.forEach((referee) => {
-                    if (referee !== null)
-                        show = show || (referee.surname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
-                            referee.firstname.toLowerCase().includes(refereeFilter.toLowerCase()));
-                });
-                showDelegates && match.delegates?.forEach((delegate) => {
-                    if (delegate !== null) {
-                        show = show || (delegate.surname.toLowerCase().includes(refereeFilter.toLowerCase()) ||
-                            delegate.firstname.toLowerCase().includes(refereeFilter.toLowerCase()));
-                    }
-                });
-            }
+    const matchesFilter = (match: MatchType) => {
+        const normalize = (str: string) =>
+            str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-            if (teamFilter !== "") {
-                const homeTeamName = match.home_team_short_name?.toLowerCase() || "";
-                const awayTeamName = match.away_team_short_name?.toLowerCase() || "";
-                show = show || homeTeamName.includes(teamFilter.toLowerCase()) || awayTeamName.includes(teamFilter.toLowerCase());
-            }
-
-            return show;
+        const refereeValues = match.referees.flatMap((referee) => {
+            if (!referee) return [];
+            const fullName1 = `${referee.firstname} ${referee.surname}`;
+            const fullName2 = `${referee.surname} ${referee.firstname}`;
+            return [referee.firstname, referee.surname, fullName1, fullName2];
         });
+
+        if (showDelegates && match.delegates) {
+            match.delegates.forEach((delegate) => {
+                if (delegate) {
+                    const fullName1 = `${delegate.firstname} ${delegate.surname}`;
+                    const fullName2 = `${delegate.surname} ${delegate.firstname}`;
+                    refereeValues.push(delegate.firstname, delegate.surname, fullName1, fullName2);
+                }
+            });
+        }
+
+        const teamValues = [
+            match.home_team_short_name || "",
+            match.away_team_short_name || "",
+        ];
+
+        return (
+            (refereeFilter &&
+                refereeValues.some((value) =>
+                    normalize(value).includes(normalize(refereeFilter))
+                )) ||
+            (teamFilter &&
+                teamValues.some((value) =>
+                    normalize(value).includes(normalize(teamFilter))
+                ))
+        );
+    };
+
+    const filteredMatches = (matches: MatchType[]) => {
+        if (refereeFilter == "" && teamFilter == "") return matches;
+
+        return matches.filter(matchesFilter);
     };
 
     return (

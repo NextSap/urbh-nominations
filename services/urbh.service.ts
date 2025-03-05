@@ -101,7 +101,7 @@ const getPromoLiegeUrl = (startDate: string, endDate: string) => {
     return `https://admin.handballbelgium.be/lms_league_ws/public/api/v1/game/byMyLeague?with_referees=true&no_forfeit=true&season_id=4&without_in_preparation=true&sort[0]=date&sort[1]=time&organization_id=7&start_date=${startDate}&end_date=${endDate}`;
 }
 
-export const getPromoBHtMatches = async (startDate: string, endDate: string) => {
+export const getPromoBHMatches = async (startDate: string, endDate: string) => {
     const url = getPromoBHUrl(startDate, endDate);
 
     return await api.get(`${url}`).json().then(MatchList.parse);
@@ -122,13 +122,57 @@ const getVHVUrl = (startDate: string, endDate: string) => {
 }
 
 export const getMatches = async (startDate: string, endDate: string) => {
-    const vhvMatches = getVHVMatches(startDate, endDate).then(matches => matches.elements);
+   /* const vhvMatches = getVHVMatches(startDate, endDate).then(matches => matches.elements);
     const nationalMatches = getNationalMatches(startDate, endDate).then(matches => matches.elements);
     const leagueMatches = getLeagueMatches(startDate, endDate).then(matches => matches.elements);
     const promoLiegeMatches = getPromoLiegeMatches(startDate, endDate).then(matches => matches.elements);
-    const promoBHMatches = getPromoBHtMatches(startDate, endDate).then(matches => matches.elements);
+    const promoBHMatches = getPromoBHMatches(startDate, endDate).then(matches => matches.elements); */
 
-    return Promise.all([nationalMatches, leagueMatches, promoLiegeMatches, promoBHMatches, vhvMatches]).then((values) => {
+    const promises = [
+        getNationalMatches(startDate, endDate),
+        getLeagueMatches(startDate, endDate),
+        getPromoLiegeMatches(startDate, endDate),
+        getPromoBHMatches(startDate, endDate),
+        getVHVMatches(startDate, endDate),
+    ]
+
+    const results = await Promise.allSettled(promises);
+
+    const matches = results.filter(result => result.status === "fulfilled")
+        .flatMap(result => result.value.elements);
+
+    matches.forEach((match) => {
+        match.referees = match.referees.filter((referee) => referee !== null);
+
+        if (match.referees.length > 2) {
+            match.delegates = match.referees.slice(2);
+            match.referees = match.referees.slice(0, 2);
+        }
+
+        const serieMap: Record<string, string> = {
+            "PrBHPO": "PM",
+            "PrBHPD": "PM",
+            "D1MPD": "D1M",
+            "D1MPM": "D1M",
+            "MFDPO": "MFDC",
+            "MFDPD": "MFDC",
+            "MSDPO": "MSDC",
+            "MSDPD": "MSDC",
+            "WFDPO": "WFDC",
+            "WFDPDA": "WFDC",
+            "WFDPDB": "WFDC",
+            "WFDRPO": "WFDRC",
+            "WFDRPD": "WFDRC",
+            "WFDRPDB": "WFDRC",
+        };
+        match.serie_reference = serieMap[match.serie_reference] || match.serie_reference;
+    });
+
+    return {
+        elements: matches
+    }
+
+   /* return Promise.all([nationalMatches, leagueMatches, promoLiegeMatches, promoBHMatches, vhvMatches]).then((values) => {
         values.flat().forEach((match) => {
             match.referees = match.referees.filter((referee) => referee !== null);
             if (match.referees.length > 2) {
@@ -149,5 +193,5 @@ export const getMatches = async (startDate: string, endDate: string) => {
         return {
             elements: values.flat()
         }
-    });
+    }); */
 }
