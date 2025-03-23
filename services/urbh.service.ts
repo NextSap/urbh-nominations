@@ -154,6 +154,7 @@ export const getMatches = async (startDate: string, endDate: string) => {
             "PrBHPD": "PM",
             "D1MPD": "D1M",
             "D1MPM": "D1M",
+            "D1MPO": "D1M",
             "MFDPO": "MFDC",
             "MFDPD": "MFDC",
             "MSDPO": "MSDC",
