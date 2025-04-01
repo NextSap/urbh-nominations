@@ -26,7 +26,7 @@ export default function RootLayout({
             <link rel="icon" href="/urbh_logo.png" sizes="any"/>
         </head>
         <body
-            className={cn(`${poppins.variable} antialiased`)}
+            className={cn(`${poppins.variable} antialiased bg-[#FAFAFA]`)}
         >
         {children}
         <Analytics/>

@@ -163,17 +163,19 @@ const MainComponent = () => {
                             const sunday = format(addDays(date, 6), "dd/MM");
                             return (
                                 <AccordionItem value={week} key={week}>
-                                    <AccordionTrigger className="font-bold text-xl">Week of {monday}<br/>Sa {saturday} -
-                                        Su {sunday}</AccordionTrigger>
-                                    <AccordionContent>
-                                        {filteredMatches(matches).map((match, index, sortedMatches) => {
-                                            return <MatchComponent key={match.reference + index} match={match}
-                                                                   showScore={showScore}
-                                                                   showDelegates={showDelegates}
-                                                                   index={index}
-                                                                   sortedMatches={sortedMatches}/>
-                                        })}
-                                    </AccordionContent>
+                                        <AccordionTrigger className="font-bold text-xl">Week
+                                            of {monday}<br/>Sa {saturday} -
+                                            Su {sunday}</AccordionTrigger>
+                                        <AccordionContent>
+                                            {filteredMatches(matches).map((match, index, sortedMatches) => {
+                                                return <MatchComponent key={match.reference + index} match={match}
+                                                                       showScore={showScore}
+                                                                       showDelegates={showDelegates}
+                                                                       index={index}
+                                                                       sortedMatches={sortedMatches}
+                                                />
+                                            })}
+                                        </AccordionContent>
                                 </AccordionItem>
                             )
                         })}

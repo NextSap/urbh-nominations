@@ -2,6 +2,7 @@ import {api} from "@/config/ky.config";
 import {MatchList} from "@/schemes/match.scheme";
 
 export const sortedSeries = [
+    "MSHL",
     "MBC",
     "WBC",
     "MFDC",
@@ -37,6 +38,7 @@ export const sortedSeries = [
 ]
 
 export const series = [
+    "Super Handball League",
     "Lotto Handball Cup Men",
     "Lotto Handball Cup Women",
     "First Division Men",

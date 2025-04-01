@@ -1,4 +1,5 @@
 export const series = {
+    "MSHL": true,
     "MFDC": true,
     "MSDC": true,
     "WFDC": true,

@@ -25,13 +25,13 @@ const MatchComponent = (props: MatchComponentProps) => {
     const isPostponed = props.match.game_status_id === 6;
 
     return (
-        <div className="pb-8 md:w-96">
+        <div className={`pb-8 md:w-96`}>
             {showSerieName &&
                 <p className="font-bold">{series[sortedSeries.indexOf(props.match.serie_reference)].toUpperCase()}</p>}
             <div className="grid grid-cols-3 ssm:grid-cols-12 grid-rows-7 ssm:grid-rows-5 grid-flow-col">
                 <p className="col-span-2 ssm:row-span-1 ssm:col-span-3 hidden ssm:block"></p>
                 <p className="col-span-2 ssm:col-span-3">{props.match.reference}</p>
-                {isPostponed ? <p className="font-bold text-red-500 col-span-2 ssm:col-span-3">Postponed</p> : <p className="col-span-2 ssm:col-span-3">{formatDate} - {formatTime}</p>}
+                {isPostponed ? <p className="font-bold text-[#D32F2F] col-span-2 ssm:col-span-3">Postponed</p> : <p className="col-span-2 ssm:col-span-3">{formatDate} - {formatTime}</p>}
                 <p className={cn("col-span-2 ssm:col-span-3 w-[95%] ssm:row-span-2", isVenueNameTooLong ? "row-span-2" : "row-span-1")}>{props.match.venue_name}</p>
                 <div className="flex items-end gap-1.5 row-span-1 col-span-2 ssm:row-span-2 ssm:col-span-4">
                     <img
